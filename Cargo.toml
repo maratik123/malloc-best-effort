@@ -1,0 +1,47 @@
+[package]
+name = "malloc-best-effort"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.87.0"
+description = "A Rust wrapper over Google's TCMalloc and Microsoft's MIMalloc memory allocators"
+repository = "https://github.com/maratik123/malloc-best-effort"
+license = "MIT"
+keywords = [
+    "tcmalloc",
+    "mimalloc",
+    "allocator",
+    "memory",
+    "performance"
+]
+categories = [
+    "memory-management",
+    "api-bindings"
+]
+readme = "README.md"
+authors = [
+    "Marat Bukharov <marat.buharov@gmail.com>"
+]
+exclude = [
+    "/.idea",
+    "/.github",
+]
+
+[dependencies]
+document-features = "0.2"
+
+[target.'cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
+tcmalloc-better = { version = "0.1", default-features = false, features = ["extension", "8k_pages"] }
+
+[target.'cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64"))))'.dependencies]
+mimalloc = { version = "0.1", default-features = false }
+
+[features]
+default = ["std"]
+## enable std
+std = ["tcmalloc-better/std"]
+
+[package.metadata.docs.rs]
+features = ["std"]
+# enable features in the documentation
+rustdoc-args = ["--cfg", "docsrs"]
+rustc-args = ["--cfg", "docsrs"]
