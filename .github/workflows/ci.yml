@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  # Run daily to catch when Rust updates cause problems to happen.
+  schedule:
+    - cron: '00 01 * * *'
+
+jobs:
+  rust-build:
+    name: Rust Build
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CARGO_INCREMENTAL: 0
+      RUST_BACKTRACE: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Build
+        run: cargo build
+
+  rust-test:
+    name: Rust Test
+    strategy:
+      matrix:
+        # todo fix windows test
+        os: [ ubuntu-latest, macos-latest ]
+
+    runs-on: ${{ matrix.os }}
+
+    env:
+      CARGO_INCREMENTAL: 0
+      RUST_BACKTRACE: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+
+      - name: Test
+        run: cargo test --workspace
+
+  rustfmt:
+    name: Rustfmt
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: rustfmt
+
+      - name: Fmt
+        run: cargo fmt --all -- --check
+
+  clippy:
+    name: Clippy
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          components: clippy
+
+      - name: Clippy
+        run: cargo clippy --workspace -- -D warnings
+
+  # Detect cases where documentation links would be dead
+  doc:
+    name: Check documentation
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: nightly
+
+      # Note: We need to use nightly rust, and `cargo rustdoc` (yes, not `cargo
+      # doc`) to actually get it to respect -D warnings... Using nightly also
+      # gets us the nicer syntax for linking to functions, and is in-line with
+      # what docs.rs uses.
+
+      - name: 'Check documentation links'
+        run: cargo rustdoc --features std -- -D warnings --cfg docsrs
