@@ -6,12 +6,51 @@
 //! Selects suitable allocator depending on target OS and architecture.
 //!
 //! ## Usage
+//! * Put to your `src/main.rs`:
 //! ```rust,ignore
 //! use malloc_best_effort::BEMalloc;
 //!
 //! #[global_allocator]
 //! static GLOBAL: BEMalloc = BEMalloc::new();
+//!
+//! fn main() {
+//!     BEMalloc::init();
+//!
+//!     // Rest of main
+//! }
 //! ```
+//!
+//! * Put to `build.rs` to workaround mimalloc build dependencies:
+//! ```rust,ignore
+//! use std::borrow::Cow;
+//! use std::env;
+//!
+//! fn main() {
+//!     let target_os = env::var("CARGO_CFG_TARGET_OS").expect("target_os not defined!");
+//!     let target_arch = env::var("CARGO_CFG_TARGET_ARCH").expect("target_arch not defined!"); // on armv6 we need to link with libatomic
+//!
+//!     if target_os == "linux" && target_arch == "arm" {
+//!         // Embrace the atomic capability library across various platforms.
+//!         // For instance, on certain platforms, llvm has relocated the atomic of the arm32 architecture to libclang_rt.builtins.a
+//!         // while some use libatomic.a, and others use libatomic_ops.a.
+//!         let atomic_name = match env::var("DEP_ATOMIC") {
+//!             Ok(atomic_name) => Cow::Owned(atomic_name),
+//!             Err(_) => Cow::Borrowed("atomic"),
+//!         };
+//!         println!("cargo:rustc-link-lib={atomic_name}");
+//!     }
+//!
+//!     // Link with libs needed on Windows
+//!     if target_os == "windows" {
+//!         // https://github.com/microsoft/mimalloc/blob/af21001f7a65eafb8fb16460b018ebf9d75e2ad8/CMakeLists.txt#L487
+//!
+//!         for lib in ["psapi", "shell32", "user32", "advapi32", "bcrypt"] {
+//!             println!("cargo:rustc-link-lib={lib}");
+//!         }
+//!     }
+//! }
+//! ```
+//!
 //! ## Feature flags
 #![doc = document_features::document_features!()]
 
@@ -126,6 +165,18 @@ mod tests {
         unsafe {
             let layout = Layout::from_size_align(8, 8).unwrap();
             let alloc = BEMalloc::new();
+
+            let ptr = alloc.alloc(layout);
+            alloc.dealloc(ptr, layout);
+        }
+    }
+
+    #[test]
+    fn it_frees_allocated_memory_with_init() {
+        unsafe {
+            let layout = Layout::from_size_align(8, 8).unwrap();
+            let alloc = BEMalloc::new();
+            BEMalloc::init();
 
             let ptr = alloc.alloc(layout);
             alloc.dealloc(ptr, layout);
