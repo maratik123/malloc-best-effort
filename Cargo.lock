@@ -121,9 +121,9 @@ checksum = "0fda2ff0d084019ba4d7c6f371c95d8fd75ce3524c3cb8fb653a3023f6323e64"
 
 [[package]]
 name = "tcmalloc-better"
-version = "0.1.8"
+version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "64e3238744f6c679f5b31965147b7311f39f599d90db86a7ca8553fe919290ca"
+checksum = "00a06332be41fc22397e44ec1e93ea3e0a73206b19da1b4f38d274093d0916ed"
 dependencies = [
  "document-features",
  "libtcmalloc-sys",
