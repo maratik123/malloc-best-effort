@@ -56,7 +56,12 @@
 
 #[cfg(not(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "powerpc64"
+    ),
+    target_endian = "little"
 )))]
 mod mimalloc {
     pub(crate) use mimalloc::MiMalloc as BEMallocImpl;
@@ -66,7 +71,12 @@ mod mimalloc {
 }
 #[cfg(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "powerpc64"
+    ),
+    target_endian = "little"
 ))]
 mod tcmalloc {
     pub(crate) use tcmalloc_better::TCMalloc as BEMallocImpl;
@@ -86,22 +96,42 @@ mod tcmalloc {
 
 #[cfg(not(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "powerpc64"
+    ),
+    target_endian = "little"
 )))]
 use crate::mimalloc::BEMallocImpl;
 #[cfg(not(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "powerpc64"
+    ),
+    target_endian = "little"
 )))]
 use crate::mimalloc::init_impl;
 #[cfg(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "powerpc64"
+    ),
+    target_endian = "little"
 ))]
 use crate::tcmalloc::BEMallocImpl;
 #[cfg(all(
     target_os = "linux",
-    any(target_arch = "x86_64", target_arch = "aarch64")
+    any(
+        target_arch = "x86_64",
+        target_arch = "aarch64",
+        target_arch = "powerpc64"
+    ),
+    target_endian = "little"
 ))]
 use crate::tcmalloc::init_impl;
 use core::alloc::{GlobalAlloc, Layout};

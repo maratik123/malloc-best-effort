@@ -4,7 +4,7 @@
 
 GlobalAllocator implementation best suited for target platform
 
-It uses [tcmalloc-better] on linux (x86_64, aarch64) and [mimalloc] on other platforms.
+It uses [tcmalloc-better] on linux (x86_64, aarch64, powerpc64le) and [mimalloc] on other platforms.
 Both wrappers are based on general-purpose, performance-oriented allocators built by Google and Microsoft respectively.
 
 ## Usage
