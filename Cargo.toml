@@ -29,10 +29,10 @@ exclude = [
 [dependencies]
 document-features = "0.2"
 
-[target.'cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64")))'.dependencies]
+[target.'cfg(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64", target_arch = "powerpc64"), target_endian = "little"))'.dependencies]
 tcmalloc-better = { version = "0.1", default-features = false, features = ["extension", "8k_pages"] }
 
-[target.'cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64"))))'.dependencies]
+[target.'cfg(not(all(target_os = "linux", any(target_arch = "x86_64", target_arch = "aarch64", target_arch = "powerpc64"), target_endian = "little")))'.dependencies]
 mimalloc = { version = "0.1", default-features = false }
 
 [features]
