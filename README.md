@@ -2,9 +2,9 @@
 
 [![Latest Version]][crates.io] [![Documentation]][docs.rs]
 
-GlobalAllocator implementation best suited for target platform
+GlobalAllocator implementation best suited for a target platform
 
-It uses [tcmalloc-better] on linux (x86_64, aarch64, powerpc64le) and [mimalloc] on other platforms.
+It uses [tcmalloc-better] on linux (x86_64, aarch64) and [mimalloc] on other platforms.
 Both wrappers are based on general-purpose, performance-oriented allocators built by Google and Microsoft respectively.
 
 ## Usage
@@ -34,7 +34,7 @@ fn main() {
 
     if target_os == "linux" && target_arch == "arm" {
         // Embrace the atomic capability library across various platforms.
-        // For instance, on certain platforms, llvm has relocated the atomic of the arm32 architecture to libclang_rt.builtins.a
+        // For instance, on certain platforms, llvm has relocated the atomics of the arm32 architecture to libclang_rt.builtins.a
         // while some use libatomic.a, and others use libatomic_ops.a.
         let atomic_name = match env::var("DEP_ATOMIC") {
             Ok(atomic_name) => Cow::Owned(atomic_name),
