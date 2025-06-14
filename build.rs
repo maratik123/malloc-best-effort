@@ -7,7 +7,7 @@ fn main() {
 
     if target_os == "linux" && target_arch == "arm" {
         // Embrace the atomic capability library across various platforms.
-        // For instance, on certain platforms, llvm has relocated the atomic of the arm32 architecture to libclang_rt.builtins.a
+        // For instance, on certain platforms, llvm has relocated the atomics of the arm32 architecture to libclang_rt.builtins.a
         // while some use libatomic.a, and others use libatomic_ops.a.
         let atomic_name = match env::var("DEP_ATOMIC") {
             Ok(atomic_name) => Cow::Owned(atomic_name),

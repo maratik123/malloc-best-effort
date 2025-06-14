@@ -56,11 +56,7 @@
 
 #[cfg(not(all(
     target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "powerpc64"
-    ),
+    any(target_arch = "x86_64", target_arch = "aarch64",),
     target_endian = "little"
 )))]
 mod mimalloc {
@@ -71,11 +67,7 @@ mod mimalloc {
 }
 #[cfg(all(
     target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "powerpc64"
-    ),
+    any(target_arch = "x86_64", target_arch = "aarch64",),
     target_endian = "little"
 ))]
 mod tcmalloc {
@@ -96,41 +88,25 @@ mod tcmalloc {
 
 #[cfg(not(all(
     target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "powerpc64"
-    ),
+    any(target_arch = "x86_64", target_arch = "aarch64",),
     target_endian = "little"
 )))]
 use crate::mimalloc::BEMallocImpl;
 #[cfg(not(all(
     target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "powerpc64"
-    ),
+    any(target_arch = "x86_64", target_arch = "aarch64",),
     target_endian = "little"
 )))]
 use crate::mimalloc::init_impl;
 #[cfg(all(
     target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "powerpc64"
-    ),
+    any(target_arch = "x86_64", target_arch = "aarch64",),
     target_endian = "little"
 ))]
 use crate::tcmalloc::BEMallocImpl;
 #[cfg(all(
     target_os = "linux",
-    any(
-        target_arch = "x86_64",
-        target_arch = "aarch64",
-        target_arch = "powerpc64"
-    ),
+    any(target_arch = "x86_64", target_arch = "aarch64",),
     target_endian = "little"
 ))]
 use crate::tcmalloc::init_impl;
@@ -172,14 +148,14 @@ impl Default for BEMalloc {
 }
 
 impl BEMalloc {
-    /// Create new instance of allocator.
+    /// Create a new instance of allocator.
     #[inline]
     pub const fn new() -> Self {
         Self {
             alloc_impl: BEMallocImpl,
         }
     }
-    /// Start allocator background job. Should be called in `main()` function.
+    /// Start an allocator background job. Should be called in `main()` function.
     #[inline]
     pub fn init() {
         init_impl();
